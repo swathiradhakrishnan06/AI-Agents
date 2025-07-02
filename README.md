@@ -5,7 +5,7 @@
 
 1. [What Are AI Agents?](#1-what-are-ai-agents)
 2. [Inside the Brain of AI Agents: Large Language Models](#2-inside-the-brain-of-ai-agents-large-language-models)
-3. [Understanding AI Agents and the ReAct Framework](#3-understanding-ai-agents-and-the-react-framework)
+3. [Understanding AI Agents and the ReAct Framework](#-3-understanding-ai-agents-and-the-react-framework)
 
 ---
 ## 1: What Are AI Agents?
