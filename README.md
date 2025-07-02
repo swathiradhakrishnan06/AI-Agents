@@ -7,6 +7,7 @@
 2. [Inside the Brain of AI Agents: Large Language Models](#2-inside-the-brain-of-ai-agents-large-language-models)
 3. [Understanding AI Agents and the ReAct Framework](#-3-understanding-ai-agents-and-the-react-framework)
 4. [AI Agentic Frameworks: A Comprehensive Briefing]()
+5. [Smolagents, Code Agents, Tool-Calling Agents, and Langfuse]()
 
 
 ---
@@ -600,6 +601,300 @@ Manus is portrayed as an **enterprise-grade, no-code** platform that can orchest
     * Browser agents
     * Vision agents
   * Focus on **agent performance enhancement**
+
+---
+
+## 5. 🧠 Smolagents, Code Agents, Tool-Calling Agents, and Langfuse
+
+This section explores the foundational concepts of **Smolagents**, a lightweight agentic framework, and the distinctions between **code agents** and **tool-calling agents**. It also explains how **Langfuse** provides observability and evaluation for agent workflows.
+
+---
+
+### 1. 🔹 Introduction to AI Agents and Smolagents
+
+AI agents are defined as systems that:
+
+* Can **plan and make decisions**
+* Have **access to tools**
+* Are powered by a **language model (LLM)**
+* Can **interact with the environment**
+* Possess **memory**
+
+**Smolagents** is an open-source Python framework designed to make it easy to build and run agents with minimal code.
+
+> “Build and run agents using just a few lines of code.”
+
+#### 🧭 Thought-Action-Observation (TAO) Loop
+
+This is the core iterative loop followed by AI agents:
+
+1. **Thought** – The agent reasons about the task.
+2. **Action** – Executes a tool or a code block.
+3. **Observation** – Receives feedback and updates memory.
+
+This loop repeats until a `final_answer` is produced. This sets agents apart from plain LLMs:
+
+> “LLM is just one small aspect of this entire loop — that whole loop is an agent.”
+
+---
+
+### 2. ⚙️ Code Agents vs. Tool-Calling Agents
+
+These two agent types differ in how they take actions.
+
+---
+
+#### 🛠️ Tool-Calling Agents
+
+* Use **structured text or JSON** to call tools.
+* Tools are passed explicitly in a standardized format.
+
+**Example**: To find the cheapest smartphone worldwide:
+
+* A tool-calling agent would perform individual tool calls for each country using structured instructions.
+
+**Advantages**:
+
+* Structured and predictable
+* Well-suited for simple, repetitive tasks
+
+**Disadvantages**:
+
+* Less flexible
+* Multiple repetitive actions for what could be a single, consolidated process
+
+---
+
+#### 💻 Code Agents
+
+* Generate and execute **code blocks** (usually Python).
+* The LLM itself generates the code during the TAO loop.
+
+**Example**: To find the cheapest smartphone:
+
+* A code agent generates a Python script that:
+
+  1. Iterates over multiple countries
+  2. Fetches prices
+  3. Converts currencies
+  4. Finds the minimum
+
+**Advantages**:
+
+* High flexibility and control
+* Allows integration with any Python library
+* Executes complex logic in fewer steps
+* Recommended for complex production workflows
+
+**Disadvantages**:
+
+* More complex to manage
+* Risk of runtime errors
+* Security implications if code is leaked
+
+> “You can literally plug and play any different Python packages into this code.”
+
+---
+
+### 3. 🧠 Agent Memory and Optimisation
+
+Agent memory stores previous thoughts, actions, and observations.
+
+* Memory is appended to the agent’s prompt to provide **contextual awareness**.
+* This is crucial for long multi-step tasks.
+
+Two strategies for memory optimization:
+
+1. **Conversation Window Buffer**
+
+   * Limits how much past context is retained.
+2. **Summarisation**
+
+   * Summarizes history to reduce memory size but can cause minor loss in accuracy.
+
+> “The LLM can make a summary of your history — similar to how humans do.”
+
+---
+
+### 4. 🔍 Agent Evaluation and Observability with Langfuse
+
+Directly viewing agent output in the console has limitations:
+
+* Poor formatting
+* Difficult to debug
+* “Black box” execution
+
+**Langfuse** solves this by offering detailed, structured observability.
+
+#### ✅ Key Features
+
+* **Trace Inspection**: See every step in the TAO loop — thoughts, actions, tool calls, and observations.
+* **System Prompt Disclosure**: Shows the hidden prompt used internally, including few-shot examples and code execution logic.
+* **Performance Metrics**:
+
+  * Input/output tokens
+  * Total LLM calls
+  * Response times
+* **Error Tracking**: Identifies where the agent fails.
+* **LLM Evaluators**: Supports evaluation based on metrics like hallucination, relevance, faithfulness, and context recall.
+
+> “Langfuse opens the black box... you can see how the code works, what tools were called, and what happened.”
+
+---
+
+### 🧪 Code Setup
+
+#### Installation and Authentication
+
+```python
+!pip install smolagents -U
+!pip install duckduckgo-search
+
+from huggingface_hub import notebook_login
+notebook_login()
+```
+
+#### Langfuse Telemetry Integration
+
+```python
+!pip install smolagents[telemetry] opentelemetry-sdk opentelemetry-exporter-otlp openinference-instrumentation-smolagents
+
+import base64
+import os
+
+os.environ["LANGFUSE_PUBLIC_KEY"] = ""
+os.environ["LANGFUSE_SECRET_KEY"] = ""
+
+LANGFUSE_PUBLIC_KEY = os.environ.get("LANGFUSE_PUBLIC_KEY")
+LANGFUSE_SECRET_KEY = os.environ.get("LANGFUSE_SECRET_KEY")
+
+if not LANGFUSE_PUBLIC_KEY or not LANGFUSE_SECRET_KEY:
+    raise ValueError("Langfuse public or secret keys are missing!")
+
+LANGFUSE_AUTH = base64.b64encode(f"{LANGFUSE_PUBLIC_KEY}:{LANGFUSE_SECRET_KEY}".encode()).decode()
+
+# Uncomment the appropriate region
+# os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = "https://cloud.langfuse.com/api/public/otel" # EU
+os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = "https://us.cloud.langfuse.com/api/public/otel" # US
+os.environ["OTEL_EXPORTER_OTLP_HEADERS"] = f"Authorization=Basic {LANGFUSE_AUTH}"
+
+print("Langfuse environment variables set successfully!")
+```
+
+#### Langfuse Tracer Setup
+
+```python
+from opentelemetry.sdk.trace import TracerProvider
+from openinference.instrumentation.smolagents import SmolagentsInstrumentor
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+
+trace_provider = TracerProvider()
+trace_provider.add_span_processor(SimpleSpanProcessor(OTLPSpanExporter()))
+SmolagentsInstrumentor().instrument(tracer_provider=trace_provider)
+```
+
+---
+
+### 5. 🧪 Practical Examples
+
+#### 🔍 Web Search Agent
+
+A web search agent is built to provide AI/ML book recommendations using the **DuckDuckGo search tool**. It is demonstrated using both agent types.
+
+```python
+from smolagents import CodeAgent, ToolCallingAgent, InferenceClientModel
+from smolagents.tools import DuckDuckGoSearchTool
+
+# Code Agent
+agent = CodeAgent(
+    tools=[DuckDuckGoSearchTool()],
+    model=InferenceClientModel(provider="together")
+)
+agent.run("Search for the best book recommendations for implementing AI in the workplace.")
+
+# Tool-Calling Agent
+agent = ToolCallingAgent(
+    tools=[DuckDuckGoSearchTool()],
+    model=InferenceClientModel(provider="together")
+)
+agent.run("Search for the best book recommendations for implementing AI in the workplace.")
+```
+
+---
+
+#### 🖼️ Vision Agent
+
+This example uses a multimodal LLM to analyze image inputs and identify comic characters.
+
+* Two images of the **Joker** are fetched from the web.
+* The model is asked to describe the character’s costume and makeup and identify whether it's **The Joker** or **Wonder Woman**.
+* No additional tools are required.
+
+```python
+from PIL import Image
+import requests
+from io import BytesIO
+
+image_urls = [
+    "https://upload.wikimedia.org/wikipedia/commons/e/e8/The_Joker_at_Wax_Museum_Plus.jpg",
+    "https://upload.wikimedia.org/wikipedia/en/9/98/Joker_%28DC_Comics_character%29.jpg"
+]
+
+images = []
+for url in image_urls:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+    }
+    response = requests.get(url, headers=headers)
+    image = Image.open(BytesIO(response.content)).convert("RGB")
+    images.append(image)
+
+from google.colab import userdata
+import os
+os.environ["OPENAI_API_KEY"] = ""
+
+from smolagents import CodeAgent, OpenAIServerModel
+
+model = OpenAIServerModel(model_id="gpt-4o")
+
+# Instantiate the agent
+agent = CodeAgent(
+    tools=[],
+    model=model,
+    max_steps=20,
+    verbosity_level=2
+)
+
+response = agent.run(
+    """
+    Describe the costume and makeup that the comic character in these photos is wearing and return the description.
+    Tell me if the guest is The Joker or Wonder Woman.
+    """,
+    images=images
+)
+```
+
+> “The agent needs no tools because just the multimodal language model itself is enough.”
+
+---
+
+### 6. 🔮 Upcoming Topics
+
+Future lessons will cover:
+
+* **Multi-Agent Systems**:
+
+  * Agents collaborating by passing off responsibility
+* **Browser Agents**:
+
+  * Automating browser-based interactions
+* **Advanced Frameworks**:
+
+  * LangGraph
+  * LlamaIndex
+  * Agentic RAG
+  * CrewAI
 
 ---
 
