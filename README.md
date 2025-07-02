@@ -3,7 +3,7 @@
 
 ## 📑 Table of Contents
 
-1. [What Are AI Agents?](#what-are-ai-agents)
+1. [What Are AI Agents?](#1-what-are-ai-agents)
 
 ---
 ## 1: What Are AI Agents?
