@@ -5,6 +5,7 @@
 
 1. [What Are AI Agents?](#1-what-are-ai-agents)
 2. [Inside the Brain of AI Agents: Large Language Models](#2-inside-the-brain-of-ai-agents-large-language-models)
+3. [Understanding AI Agents and the ReAct Framework](#3-understanding-ai-agents-and-the-react-framework)
 
 ---
 ## 1: What Are AI Agents?
@@ -196,5 +197,136 @@ Artificial Intelligence (AI)
 * SLMs (10M–50M parameters) are gaining traction for **enterprise-specific** use cases.
 * Can be trained on **company-specific data** ("corporate brain").
 * Offer cost-effective, tailored performance without needing massive infrastructure.
+
+---
+Great! Here's the content formatted consistently with the other subsections, using emojis, bolded subheadings, and clear bullet points:
+
+---
+
+## 🎯 3. Understanding AI Agents and the ReAct Framework
+
+This section introduces the foundational concepts behind AI agents, how they extend the capabilities of LLMs, and the role of the ReAct (Reasoning and Action) framework in enabling intelligent, tool-using behaviour.
+
+---
+
+### 🧠 Core Concept of AI Agents
+
+* **Definition**: AI agents are enhanced LLMs that can **plan, decide, act, and interact** with their environment to provide real-world utility.
+* **Foundation**:
+
+  > “The foundation of agents is something which is called as a large language model.”
+  > LLMs act as the **brain** of agents, taking word sequences as input and predicting the next token while learning both form and meaning.
+* **Emergent Properties**:
+  LLMs gain **emergent capabilities** once they reach a certain scale, which makes them suitable for reasoning and planning tasks.
+* **Augmentation**:
+  Agents are formed by **augmenting LLMs** with the ability to:
+
+  * Plan and take decisions
+  * Use external tools
+  * Interact with an environment
+  * Remember past interactions
+
+---
+
+### 🛠️ Role and Integration of Tools
+
+* **Definition**:
+
+  > “Tools are weapons which a large language model receives so that it can interact with its environment.”
+  > Tools extend the LLM’s ability to **act beyond language**.
+* **Examples**:
+
+  * 🔍 Web Search: DuckDuckGo, SerpAPI
+  * ➕ Math: LLM Math tool
+  * 🎨 Code/Image: Generation or evaluation tools
+  * 🌦️ APIs: GitHub, YouTube, Spotify, Weather APIs
+* **Tool Usage via Prompts**:
+
+  * Tools are **defined and described in the prompt**
+  * The LLM **calls a tool** by writing a specific string (tool call)
+  * Agent **executes the call** and observes the result
+  * > “Prompt engineering is extremely important because it’s how you convey in the prompt that… here are the tools which you have to use.”
+* **Complementing LLM Weaknesses**:
+
+  * Struggles with math? ➡️ Use a calculator tool
+  * Needs real-time data? ➡️ Use a search tool
+* **Custom Tools**:
+
+  * You can create tools with **simple custom functions** and define them in the prompt.
+
+---
+
+### 🔁 The ReAct Framework: Reasoning + Action
+
+* **Background**:
+
+  * Based on **Chain-of-Thought (CoT)** prompting:
+
+    > “Generate reasoning traces or thoughts” through examples in the prompt
+    > Helps the LLM simulate **thinking** and **planning**
+  * Limitation: CoT **cannot act**—it’s only internal reasoning.
+* **The ReAct Loop (TAO)**:
+  Adds **acting + observation** through a structured loop:
+
+  1. **Thought** – Internal reasoning (“what should I do?”)
+  2. **Action** – Executes the next step (often via tools)
+  3. **Observation** – Feedback from tool or environment
+* **Key Principle**:
+
+  > “This thought–action–observation framework is repeated n times... until the LLM thinks it has the right answer.”
+* **Memory**:
+
+  * The loop depends on remembering past interactions to guide future actions.
+* **Implementation**:
+
+  * The ReAct loop is **implemented entirely in the prompt**
+
+---
+
+### 🧰 Building an AI Agent: LLM + Tools + Prompt
+
+* **Essential Components**:
+
+  * 🧠 **LLM**: E.g., GPT-3.5 Turbo
+  * 🔧 **Tools**: DuckDuckGo search, LLM Math, APIs
+  * ✍️ **Prompt**: Encodes how to think, reason, and use tools
+* **Frameworks**:
+
+  * **LangChain** helps structure agents:
+
+    * Predefined tools
+    * Prompt templates (`create_react_agent`)
+    * Agent lifecycle management
+  * > “LangChain is the main framework in which we are going to develop our first agent today.”
+* **Execution**:
+
+  * The agent **calls the LLM** with prompt + tools
+  * Enables reasoning, planning, and real-world interaction
+* **Limitations & Guardrails**:
+
+  * ❗ **Hallucinations** – Agents can still generate false or misleading info
+  * 🔁 **Endless Loops** – Prevent with `max_iterations`
+  * 🔒 **Guardrails** – Evaluation layers to ensure output quality and safety
+
+---
+
+### 🍬 Analogy: Kid Searching for Candy (TAO in Action)
+
+* A child must find a chair with candy among five:
+
+  1. 🧠 Thinks: “Let me check the first chair”
+  2. 🏃 Acts: Moves to the chair
+  3. 👀 Observes: No candy found
+
+  * Repeats the process until successful
+* Mirrors an agent’s **Thought–Action–Observation** cycle, using memory and feedback to guide exploration
+
+---
+
+### ✅ Summary
+
+> “Agents are glorified language models who have access to tools, who have access to environment, who can reason and plan with memory.”
+
+The **ReAct framework**, paired with **strategic prompt engineering** and **tool integration**, transforms a static LLM into an intelligent agent capable of decision-making, interaction, and iterative reasoning.
 
 ---
