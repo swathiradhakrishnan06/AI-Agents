@@ -6,8 +6,8 @@
 1. [What Are AI Agents?](#1-what-are-ai-agents)
 2. [Inside the Brain of AI Agents: Large Language Models](#2-inside-the-brain-of-ai-agents-large-language-models)
 3. [Understanding AI Agents and the ReAct Framework](#-3-understanding-ai-agents-and-the-react-framework)
-4. [AI Agentic Frameworks: A Comprehensive Briefing]()
-5. [Smolagents, Code Agents, Tool-Calling Agents, and Langfuse]()
+4. [AI Agentic Frameworks: A Comprehensive Briefing](#-4-ai-agentic-frameworks-a-comprehensive-briefing)
+5. [Smolagents, Code Agents, Tool-Calling Agents, and Langfuse](#5--smolagents-code-agents-tool-calling-agents-and-langfuse)
 
 
 ---
