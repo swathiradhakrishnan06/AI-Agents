@@ -4,7 +4,7 @@
 ## 📑 Table of Contents
 
 1. [What Are AI Agents?](#1-what-are-ai-agents)
-2. [Inside the Brain of AI Agents: Large Language Models](#2-inside-the-brain-of-ai-agents)
+2. [Inside the Brain of AI Agents: Large Language Models](#2-inside-the-brain-of-ai-agents-large-language-models)
 
 ---
 ## 1: What Are AI Agents?
